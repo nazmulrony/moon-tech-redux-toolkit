@@ -1,12 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
-import { addProduct } from "../../features/products/productsSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+    addProduct,
+    togglePostSuccess,
+} from "../../features/products/productsSlice";
+import toast from "react-hot-toast";
 
 const AddProduct = () => {
     const { register, handleSubmit } = useForm();
 
     const dispatch = useDispatch();
+    const { isLoading, isError, postSuccess, error } = useSelector(
+        (state) => state.products
+    );
 
     const submit = (data) => {
         const product = {
@@ -22,10 +29,22 @@ const AddProduct = () => {
             ],
             spec: [],
         };
-
         console.log(product);
         dispatch(addProduct(product));
     };
+
+    useEffect(() => {
+        if (isLoading) {
+            toast.loading("Product adding...", { id: "addProduct" });
+        }
+        if (!isLoading && postSuccess) {
+            toast.success("Product added successfully", { id: "addProduct" });
+            dispatch(togglePostSuccess());
+        }
+        if (!isLoading && isError) {
+            toast.error(error, { id: "addProduct" });
+        }
+    }, [isLoading, isError, error, postSuccess, dispatch]);
 
     return (
         <div className="flex justify-center items-center h-full ">
@@ -62,7 +81,7 @@ const AddProduct = () => {
                 </div>
                 <div className="flex flex-col w-full max-w-xs">
                     <label className="mb-2" htmlFor="price">
-                        Image
+                        Price
                     </label>
                     <input
                         type="text"
