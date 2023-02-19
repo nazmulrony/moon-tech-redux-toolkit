@@ -6,25 +6,29 @@ import {
     toggleDeleteSuccess,
 } from "../../features/products/productsSlice";
 import toast from "react-hot-toast";
+import {
+    useGetProductsQuery,
+    useRemoveProductMutation,
+} from "../../features/api/apiSlice";
 
 const ProductList = () => {
     const dispatch = useDispatch();
-    const { products, isLoading, isError, error, deleteSuccess } = useSelector(
-        (state) => state.products
-    );
+    const { data, isLoading } = useGetProductsQuery();
+    const products = data?.data;
 
-    useEffect(() => {
-        dispatch(getProducts());
-    }, [dispatch]);
-    useEffect(() => {
-        if (!isLoading && deleteSuccess) {
-            toast.success("Product deleted");
-            dispatch(toggleDeleteSuccess());
-        }
-        if (!isLoading && isError) {
-            toast.error(error);
-        }
-    }, [dispatch, isLoading, error, isError, deleteSuccess]);
+    const [removeProduct] = useRemoveProductMutation();
+    // useEffect(() => {
+    //     dispatch(getProducts());
+    // }, [dispatch]);
+    // useEffect(() => {
+    //     if (!isLoading && deleteSuccess) {
+    //         toast.success("Product deleted");
+    //         dispatch(toggleDeleteSuccess());
+    //     }
+    //     if (!isLoading && isError) {
+    //         toast.error(error);
+    //     }
+    // }, [dispatch, isLoading, error, isError, deleteSuccess]);
     if (isLoading) {
         return <h1>Loading...</h1>;
     }
@@ -69,7 +73,7 @@ const ProductList = () => {
                         </thead>
 
                         <tbody class="text-sm divide-y divide-gray-100">
-                            {products.map(
+                            {products?.map(
                                 ({ model, brand, price, status, _id }) => (
                                     <tr>
                                         <td class="p-2">
@@ -111,9 +115,7 @@ const ProductList = () => {
                                             <div class="flex justify-center">
                                                 <button
                                                     onClick={() =>
-                                                        dispatch(
-                                                            removeProduct(_id)
-                                                        )
+                                                        removeProduct(_id)
                                                     }
                                                 >
                                                     <svg

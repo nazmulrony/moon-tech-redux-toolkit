@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import {
-    addProduct,
-    togglePostSuccess,
-} from "../../features/products/productsSlice";
+// import {
+//     addProduct,
+//     togglePostSuccess,
+// } from "../../features/products/productsSlice";
 import toast from "react-hot-toast";
 import { useAddProductMutation } from "../../features/api/apiSlice";
 
