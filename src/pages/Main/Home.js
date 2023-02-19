@@ -1,21 +1,22 @@
-import React, { useEffect } from "react";
+import React from "react";
 import ProductCard from "../../components/ProductCard";
 import { useDispatch, useSelector } from "react-redux";
 import { toggle, toggleBrands } from "../../features/filter/filterSlice";
-import { getProducts } from "../../features/products/productsSlice";
+// import { getProducts } from "../../features/products/productsSlice";
+import { useGetProductsQuery } from "../../features/api/apiSlice";
 
 const Home = () => {
-    // const [products, setProducts] = useState([]);
     const dispatch = useDispatch();
     const { stock, brands } = useSelector((state) => state.filter);
-    const { products, isLoading, isError } = useSelector(
-        (state) => state.products
-    );
+    // const { products, isLoading } = useSelector((state) => state.products);
     console.log(stock, brands);
 
-    useEffect(() => {
-        dispatch(getProducts());
-    }, [dispatch]);
+    // useEffect(() => {
+    //     dispatch(getProducts());
+    // }, [dispatch]);
+    const { data, isLoading, isError, error } = useGetProductsQuery();
+    const products = data?.data;
+    console.log(products);
 
     const activeClass = "text-white  bg-indigo-500 border-white";
 
@@ -27,13 +28,13 @@ const Home = () => {
             </div>
         );
     }
-    if (products.length) {
+    if (products?.length) {
         content = products.map((product) => (
             <ProductCard key={product.model} product={product} />
         ));
     }
 
-    if (products.length && (brands.length || stock)) {
+    if (products?.length && (brands?.length || stock)) {
         content = products
             .filter((product) => {
                 if (stock) {
@@ -42,7 +43,7 @@ const Home = () => {
                 return product;
             })
             .filter((product) => {
-                if (brands.length) {
+                if (brands?.length) {
                     return brands.includes(product.brand);
                 }
                 return product;

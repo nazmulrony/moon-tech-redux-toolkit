@@ -6,14 +6,17 @@ import {
     togglePostSuccess,
 } from "../../features/products/productsSlice";
 import toast from "react-hot-toast";
+import { useAddProductMutation } from "../../features/api/apiSlice";
 
 const AddProduct = () => {
     const { register, handleSubmit } = useForm();
 
     const dispatch = useDispatch();
-    const { isLoading, isError, postSuccess, error } = useSelector(
-        (state) => state.products
-    );
+    // const { isLoading, isError, postSuccess, error } = useSelector(
+    //     (state) => state.products
+    // );
+    const [postProduct, { isSuccess, isLoading, isError, error }] =
+        useAddProductMutation();
 
     const submit = (data) => {
         const product = {
@@ -30,21 +33,21 @@ const AddProduct = () => {
             spec: [],
         };
         console.log(product);
-        dispatch(addProduct(product));
+        // dispatch(addProduct(product));
+        postProduct(product);
     };
 
     useEffect(() => {
         if (isLoading) {
             toast.loading("Product adding...", { id: "addProduct" });
         }
-        if (!isLoading && postSuccess) {
+        if (isSuccess) {
             toast.success("Product added successfully", { id: "addProduct" });
-            dispatch(togglePostSuccess());
         }
-        if (!isLoading && isError) {
+        if (isError) {
             toast.error(error, { id: "addProduct" });
         }
-    }, [isLoading, isError, error, postSuccess, dispatch]);
+    }, [isLoading, isError, error, isSuccess]);
 
     return (
         <div className="flex justify-center items-center h-full ">
